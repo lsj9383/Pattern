@@ -31,6 +31,7 @@ namespace ThreadStateMachine
                 Console.WriteLine("Initial Finished");
             });
 
+            sm.Start();
             MainThread();
         }
     }

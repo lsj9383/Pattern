@@ -28,7 +28,7 @@ namespace ThreadStateMachine.Machine
             Life = life;           //3次提交
         }
 
-        public void Process(StateMachine Machine)
+        public override void Process(StateMachine Machine)
         {
             Machine.SetState(Machine.BUSY);             //在开启线程前，必须确保状态已经是BUSY
 

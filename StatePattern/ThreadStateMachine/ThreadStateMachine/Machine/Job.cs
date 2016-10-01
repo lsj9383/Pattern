@@ -32,8 +32,8 @@ namespace ThreadStateMachine.Machine
         }
     }
 
-    interface Job
+    abstract class Job
     {
-        void Process(StateMachine Machine);
+        public abstract void Process(StateMachine Machine);
     }
 }

@@ -98,6 +98,8 @@ namespace ThreadStateMachine.Machine
                         sMachine.jobResult.SetStatus(-2);
                     }
                 });
+
+            task.Start();
         }
 
         public override void Next()

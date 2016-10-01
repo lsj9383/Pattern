@@ -337,3 +337,36 @@ class Busy : State
 	}
 }
 ```
+
+###工作类
+工作类即job类，外部用户的任何操作请求，均是通过向状态机添加具体的job的方式，以达到用户与状态机之间的交互。这些job类的具体执行，都会开启一个线程，线程开启期间，状态机的状态处于BUSY，状态机主循环将会等待(非阻塞的等待)该线程的结束。需要明确的是，工作类的操作执行**不可对状态机的状态作操作**。因为状态机的状态均是由状态机循环来完成，而不能由别的线程完成，否则会造成混乱。Job类为了能够返回给状态机的主循环线程工作完成的消息，需要定义JobResult类，该类中保存了job执行的结果。BUSY状态将会一直读取JobResult，当得到结果时就意味着job线程结束，这个时候BUSY机会根据job的执行结果更改状态。需要注意的是，JobResult一旦结果被读取，将会自动将结果清零，且读取结果的操作只能由BUSY状态读取。这样是为了保证运行的稳定，不至于混乱。
+```C#
+class JobResult
+{
+	int isSuccess = 0;
+	private Object lockRoot = new Object();
+
+	public void SetStatus(int success)
+	{
+		lock (lockRoot)
+		{
+			isSuccess = success;
+		}
+	}
+
+	public int GetStatus()
+	{
+		lock (lockRoot)
+		{
+			int tmp = isSuccess;
+			isSuccess = 0;          //isSuccess读取一次后，直接置零。
+			return tmp;
+		}
+	}
+}
+
+abstract class Job
+{
+	public abstract void Process(StateMachine Machine);
+}
+```
