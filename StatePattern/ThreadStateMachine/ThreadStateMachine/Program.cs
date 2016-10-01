@@ -16,10 +16,14 @@ namespace ThreadStateMachine
 
         static void MainThread()
         {
-            while (true)
+            for (int cntLoop=0; true; cntLoop++ )
             {
                 Thread.Sleep(1000);
-                Console.WriteLine("Main Thread Looping");
+                Console.WriteLine("Main Thread Looping, Job has : " + sm.JobsCount());
+                if (cntLoop < 10)
+                {
+                    sm.EnqueueJobs(new UploadJob("", ""));
+                }
             }
         }
 
@@ -30,8 +34,8 @@ namespace ThreadStateMachine
             {
                 Console.WriteLine("Initial Finished");
             });
-
             sm.Start();
+
             MainThread();
         }
     }

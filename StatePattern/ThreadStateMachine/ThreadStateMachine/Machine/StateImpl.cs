@@ -14,6 +14,11 @@ namespace ThreadStateMachine.Machine
     {
         public Busy(StateMachine machine):base(machine){ }
 
+        public override string ToString()
+        {
+            return "BUSY";
+        }
+
         public override void Initial(EventHandler<EventArgs> eHandler)
         {
             throw new NotImplementedException();                //throw.
@@ -46,6 +51,11 @@ namespace ThreadStateMachine.Machine
     {
         public Looping(StateMachine machine) : base(machine) { }
 
+        public override string ToString()
+        {
+            return "LOOP";
+        }
+
         public override void Initial(EventHandler<EventArgs> eHandler)
         {
             throw new NotImplementedException();                //throw.
@@ -66,7 +76,12 @@ namespace ThreadStateMachine.Machine
     {
         private EventHandler<EventArgs> errorHandler;
         public Error(StateMachine machine, EventHandler<EventArgs> handler) : base(machine) { errorHandler = handler; }
-        
+
+        public override string ToString()
+        {
+            return "ERROR";
+        }
+
         public override void Initial(EventHandler<EventArgs> eHandler)
         {
             throw new NotImplementedException();                //throw.
@@ -84,6 +99,10 @@ namespace ThreadStateMachine.Machine
     {
         public Empty(StateMachine machine) : base(machine) { }
 
+        public override string ToString()
+        {
+            return "EMPTY";
+        }
 
         public override void Initial(EventHandler<EventArgs> eHandler)
         {
@@ -97,6 +116,10 @@ namespace ThreadStateMachine.Machine
                     {   //初始化失败，这个状态机不可用, 返回错误代码
                         sMachine.jobResult.SetStatus(-2);
                     }
+                    else
+                    {   //初始化成功
+                        sMachine.jobResult.SetStatus(1);
+                    }
                 });
 
             task.Start();
@@ -109,7 +132,7 @@ namespace ThreadStateMachine.Machine
 
         private bool InitialProcess()
         {
-            Thread.Sleep(2000);
+            Thread.Sleep(5000);
             return true;
         }
     }

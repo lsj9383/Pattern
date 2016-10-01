@@ -32,6 +32,8 @@ namespace ThreadStateMachine.Machine
             LOOP = new Looping(this);
             ERROR = new Error(this, eErrorHandler);
             EMPTY = new Empty(this);
+            jobResult = new JobResult();
+            itemManger = new ItemManager();
 
             state = EMPTY;      //等待初始化状态
         }
@@ -45,10 +47,16 @@ namespace ThreadStateMachine.Machine
         {
             new Thread(() => 
             {
+                State oldState = state;
                 while (true)
                 {
                     state.Next();
-                    Thread.Sleep(10);       //释放当前线程
+                    Thread.Sleep(100);       //释放当前线程
+                    if (oldState != state)
+                    {
+                        oldState = state;
+                        Console.WriteLine(state);
+                    }
                 }
             }).Start();
         }

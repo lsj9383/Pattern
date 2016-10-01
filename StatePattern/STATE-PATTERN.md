@@ -5,7 +5,7 @@
 	* [例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)
 * 内部驱动的状态模式
 	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)
-	* [多线程例子]()
+	* [多线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)
 
 ##外部驱动的状态模式
 外部驱动的状态模式，是由用户使用状态机，而使状态机的状态进行改变的。<br><br>
@@ -262,6 +262,10 @@ class Empty : State
 				{   //初始化失败，这个状态机不可用, 返回错误代码
 					sMachine.jobResult.SetStatus(-2);
 				}
+				else
+				{   //初始化成功
+					sMachine.jobResult.SetStatus(1);
+				}
 			});
 	}
 
@@ -339,7 +343,7 @@ class Busy : State
 ```
 
 ###工作类
-工作类即job类，外部用户的任何操作请求，均是通过向状态机添加具体的job的方式，以达到用户与状态机之间的交互。这些job类的具体执行，都会开启一个线程，线程开启期间，状态机的状态处于BUSY，状态机主循环将会等待(非阻塞的等待)该线程的结束。需要明确的是，工作类的操作执行**不可对状态机的状态作操作**。因为状态机的状态均是由状态机循环来完成，而不能由别的线程完成，否则会造成混乱。Job类为了能够返回给状态机的主循环线程工作完成的消息，需要定义JobResult类，该类中保存了job执行的结果。BUSY状态将会一直读取JobResult，当得到结果时就意味着job线程结束，这个时候BUSY机会根据job的执行结果更改状态。需要注意的是，JobResult一旦结果被读取，将会自动将结果清零，且读取结果的操作只能由BUSY状态读取。这样是为了保证运行的稳定，不至于混乱。
+工作类即job类，外部用户的任何操作请求，均是通过向状态机添加具体的job的方式，以达到用户与状态机之间的交互。这些job类的具体执行，都会开启一个线程，线程开启期间，状态机的状态处于BUSY，状态机主循环将会等待(非阻塞的等待)该线程的结束。需要明确的是，工作类的操作执行**不可对状态机的状态作操作**。因为状态机的状态均是由状态机循环来完成，而不能由别的线程完成，否则会造成混乱。Job类为了能够返回给状态机的主循环线程工作完成的消息，需要定义JobResult类，该类中保存了job执行的结果。BUSY状态将会一直读取JobResult，当得到结果时就意味着job线程结束，这个时候BUSY机会根据job的执行结果更改状态。需要注意的是，JobResult一旦结果被读取，将会自动将结果清零，且读取结果的操作只能由BUSY状态读取。这样是为了保证运行的稳定，不至于混乱。当然JobResult应该设计为线程安全的。
 ```C#
 class JobResult
 {
@@ -370,3 +374,92 @@ abstract class Job
 	public abstract void Process(StateMachine Machine);
 }
 ```
+现在，要构造Job的实际类，这个实际类需要根据工程的实际业务来决定。当需要提交某个具体的Job的时候，就只需要实例化该具体Job，再将该Job放入状态机的Job队列中即可。
+
+###状态机
+```C#
+class StateMachine
+{
+	//耗时操作的对象，状态机的所有操作均基于该对象，该对象提供的操作全都是异步操作。
+	public ItemManager itemManger {get; private set;}
+
+	//必需状态
+	public State BUSY   = null;
+	public State LOOP   = null;
+	public State ERROR  = null;
+	public State EMPTY  = null;
+
+	private State state = null;
+	
+	//工具组件
+	private Queue<Job> Jobs = new Queue<Job>();
+	public JobResult jobResult { get; private set; }
+
+	public StateMachine(EventHandler<EventArgs> eErrorHandler)
+	{ 
+		BUSY = new Busy(this);
+		LOOP = new Looping(this);
+		ERROR = new Error(this, eErrorHandler);
+		EMPTY = new Empty(this);
+		jobResult = new JobResult();
+		itemManger = new ItemManager();
+
+		state = EMPTY;      //等待初始化状态
+	}
+
+	public void Initial(EventHandler<EventArgs> eHandler)
+	{
+		state.Initial(eHandler);
+	}
+
+	public void Start()
+	{
+		new Thread(() => 
+		{
+			State oldState = state;
+			while (true)
+			{
+				state.Next();
+				Thread.Sleep(100);       //释放当前线程
+				if (oldState != state)
+				{
+					oldState = state;
+					Console.WriteLine(state);
+				}
+			}
+		}).Start();
+	}
+
+	//工作队列操作
+	public void EnqueueJobs(Job job)
+	{
+		lock (Jobs)
+		{
+			Jobs.Enqueue(job);
+		}
+	}
+
+	public Job DequeueJobs()
+	{
+		lock (Jobs)
+		{
+			return Jobs.Dequeue();
+		}
+	}
+
+	public int JobsCount()
+	{
+		lock (Jobs)
+		{
+			return Jobs.Count;
+		}
+	}
+
+	//状态转移
+	public void SetState(State sta)
+	{
+		state = sta;
+	}
+}
+```
+在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)有个操作实例，可供参考。
