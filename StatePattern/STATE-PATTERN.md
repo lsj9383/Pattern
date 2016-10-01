@@ -1,5 +1,6 @@
 ﻿#状态模式
-状态机是某种具有多种状态机器的抽象。状态模式是采用面向对象机制对状态机作编程，通常分为两类，一类是由外部用户驱动的`外部状态模式`，另一类是由状态机内部状态驱动的`内部状态模式`。
+状态机是某种具有多种状态机器的抽象。状态机适合机器根据当前不同的状态，对不同的请求执行不同的操作的业务。<br>
+状态模式是采用面向对象机制对状态机作编程，通常分为两类，一类是由外部用户驱动的`外部状态模式`，另一类是由状态机内部状态驱动的`内部状态模式`。
 
 ##外部状态模式
 外部状态模式，是由用户使用状态机，而使状态机的状态进行改变的。<br>
@@ -17,7 +18,7 @@ class StateOne : State
 {
 	private StateMachine Machine;
 	
-	void StateOne(StateMachine Machine)
+	void StateOne(StateMachine Machine)		//将机器本身传入，一方面是为了方便进行机器的状态转换，另一方面是方便使用机器本身的一些操作。
 	{
 		this.Machine = Machine;
 	}
@@ -30,8 +31,8 @@ class StateOne : State
 	
 	void Opera2()
 	{
-		...							//具体的StateOne的Opera2操作逻辑
-		Machine.SetState(...);		//StateOne在Opera2操作后，进行状态转移
+		...									//具体的StateOne的Opera2操作逻辑
+		Machine.SetState(Machine.State2);	//StateOne在Opera2操作后，进行状态转移
 	}
 }
 
@@ -41,40 +42,41 @@ class StateTwo : State
 }
 ```
 
+状态类定义完成后，可以完成状态机的定义。状态机是面向用户使用的，它的操作由用户驱动。状态机执行一个操作后，会阻塞线程，直到操作和状态转移完成。
+
 ```C#
 class StateMachine
 {
-	private State State1 = null;
-	private State State2 = null;
-	private State State3 = null;
-	private State State = null;
+	public State State1 { get; private set; }
+	public State State2 { get; private set;}
+	
+	private State State = null;			//标识当前的状态
 	
 	public StateMachine()
 	{
 		State1 = new StateOne(this);
 		State2 = new StateTwo(this);
-		State3 = new StateThree(this);
 	}
 	
 	public void Initial()
 	{
 		...
-		State = State-n		//初始化，更加状态机初始情况，设置初始状态。
+		State = StateOne;				//初始化，更加状态机初始情况，设置初始状态。
 	}
 	
 	public void Opera1()
 	{
-	
+		state.Opera1();
 	}
 	
 	public void Opera2()
 	{
-	
+		state.Opera2();
 	}
 }
 
 ```
-
+参考
 
 ##内部状态模式
 
