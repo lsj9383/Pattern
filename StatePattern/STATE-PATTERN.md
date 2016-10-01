@@ -37,24 +37,7 @@ class StateOne : State
 
 class StateTwo : State
 {
-	private StateMachine Machine;
-	
-	void StateTwo(StateMachine Machine)
-	{
-		this.Machine = Machine;
-	}
-	
-	void Opera1(StateMachine Machine)
-	{
-		...							//具体的StateTwo的Opera1操作逻辑
-		Machine.SetState(...);		//StateTwo在Opera1操作后，进行状态转移
-	}
-	
-	void Opera2()
-	{
-		...							//具体的StateTwo的Opera2操作逻辑
-		Machine.SetState(...);		//StateTwo在Opera2操作后，进行状态转移
-	}
+	...		//类似StateOne
 }
 ```
 
