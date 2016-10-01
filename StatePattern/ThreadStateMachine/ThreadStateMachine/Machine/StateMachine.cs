@@ -14,20 +14,31 @@ namespace ThreadStateMachine.Machine
         //耗时操作的对象，状态机的所有操作均基于该对象，该对象提供的操作全都是异步操作。
         public ItemManager itemManger {get; private set;}
 
-
-        public State BUSY = null;
-        public State LOOP = null;
-        public State ERROR = null;
+        //必需状态
+        public State BUSY   = null;
+        public State LOOP   = null;
+        public State ERROR  = null;
+        public State EMPTY  = null;
 
         private State state = null;
+        
+        //工具组件
         private Queue<Job> Jobs = new Queue<Job>();
         public JobResult jobResult { get; private set; }
 
-        public StateMachine()
+        public StateMachine(EventHandler<EventArgs> eErrorHandler)
         { 
             BUSY = new Busy(this);
             LOOP = new Looping(this);
-            ERROR = new Error(this);
+            ERROR = new Error(this, eErrorHandler);
+            EMPTY = new Empty(this);
+
+            state = EMPTY;      //等待初始化状态
+        }
+
+        public void Initial(EventHandler<EventArgs> eHandler)
+        {
+            state.Initial(eHandler);
         }
 
         public void Start()

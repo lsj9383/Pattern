@@ -10,12 +10,12 @@ namespace ThreadStateMachine.Machine
     {
         protected StateMachine sMachine;
 
-
         public State(StateMachine machine)
         {
             sMachine = machine;
         }
 
         public abstract void Next();
+        public abstract void Initial(EventHandler<EventArgs> eHandler);
     }
 }

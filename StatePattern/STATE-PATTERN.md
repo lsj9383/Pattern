@@ -221,10 +221,11 @@ class StateMachine
 * 多线程执行状态机主循环
 * 多线程执行状态机的Job
 要认识到，一方面若用单一线程，将会无法添加额外的状态机，并且状态机线程和用户线程本就相互较为独立。用户有什么需求，只需要向状态提出Job请求即可。另一方面，Job操作认为是比较耗时的，因此Job操作全部采用异步操作。也就是说状态机在处理一个Job的时候，会再开一个线程处理Job。需要注意的是，在一个Job还未处理完时，状态机不应再处理其他Job，而是进入BUSY状态，等待该Job线程处理完毕。<br>
+
 ###状态类
 有四种必要的状态类是多线程状态模式所必须，也是核心稳健的控制机制的关键类。
-* BUSY
 * LOOP
+* BUSY
 * ERROR
 * EMPTY
 首先来定义抽象状态基类，该基类有共同的操作。(之前的定义都是对接口的，这里是抽象基类，是因为可能有很多基类，这些基类的构造函数势必有相同的部分)
@@ -240,8 +241,78 @@ abstract class State
 }
 ```
 
-####BUSY
-BUSY状态，用来标识当前的Job是否处于运行。BUSY状态相当特殊，它是一个Job操作后的等待状态，因此，在操作完成以前，是不能进入其他状态的。而在操作完成后，BUSY状态需要根据完成的情况，进行状态转移。这样就势必需要让Job能够返回一个操作结果的信息。
+####EMPTY状态
+这个状态是针对初始化这一特殊操作进行的。状态机的当前状态，在建立类的时候，都是EMPTY状态。这个状态意味着等待人工初始化。之所以要将初始化单独做一个接口，是因为初始化并不是由状态机驱动的，可以认为是该类状态机唯一一个需要由外部进行驱动的状态。起始状态之所以不由状态机内部驱动，是因为初始化操作可以是在开启状态机之前进行的。如果将初始化操作放在状态机线程开启之后由状态机自动驱动其初始化，势必造成开启状态机线程时有较长延时，另一方面这个初始化操作若将初始化的时候开启线程，又会造成不必要的CPU性能的浪费。因此应该将初始化操作独立出来，由外部用户驱动。这样，一个状态就会有两个方法，一个是Initial，一个是Next
+
+```C#
+class Empty : State
+{
+	public Empty(StateMachine machine) : base(machine) { }
+
+
+	public override void Initial(EventHandler<EventArgs> eHandler)
+	{
+		sMachine.SetState(sMachine.BUSY);       //初始化线程打开前，先将状态置为繁忙.
+
+		Task<bool> task = new Task<bool>(InitialProcess);
+		task.ContinueWith(t =>
+			{
+				eHandler(sMachine, new EventArgs());
+				if (t.Result == false)
+				{   //初始化失败，这个状态机不可用, 返回错误代码
+					sMachine.jobResult.SetStatus(-2);
+				}
+			});
+	}
+
+	public override void Next()
+	{
+		throw new NotImplementedException();
+	}
+
+	//初始化逻辑，返回初始化成功或是失败
+	private bool InitialProcess()
+	{
+		...
+	}
+}
+```
+
+####LOOP状态
+这个状态是状态模式对业务逻辑处理的关键类，它虽然不控制业务逻辑，但是它执行提取Job，并执行Job的工作。至于工作类，在后面再解决。
+```C#
+class Looping : State
+{
+	public Looping(StateMachine machine) : base(machine) { }
+	public override void Next()
+	{
+		if (sMachine.JobsCount() > 0)
+		{
+			sMachine.SetState(sMachine.BUSY);               //设为忙状态
+			sMachine.DequeueJobs().Process(sMachine);       //对工作出队，并进行处理
+		}
+	}
+}
+```
+
+####ERROR状态
+虽然该状态并不是影响状态机工作的关键，但是却会极大的增强状态机的稳定性。这个状态也是出错后可以和用户主线程的接口。
+```C#
+class Error : State
+{
+	private EventHandler<EventArgs> errorHandler;
+	public Error(StateMachine machine, EventHandler<EventArgs> handler) : base(machine) { errorHandler = handler; }
+
+	public override void Next()
+	{
+		errorHandler(sMachine, new EventArgs());            //错误处理
+		sMachine.SetState(sMachine.LOOP);                   //恢复轮询状态            
+	}
+}
+```
+
+####BUSY状态
+用来标识当前的Job是否处于运行，若有BUSY状态在处理，则会进入BUSY态。BUSY状态相当特殊，它是一个Job操作后的等待状态，因此，在操作完成以前，是不能进入其他状态的。而在操作完成后，BUSY状态需要根据完成的情况，进行状态转移。这样就势必需要让Job能够返回一个操作结果的信息。
 ```C#
 //繁忙状态
 class Busy : State
@@ -257,7 +328,7 @@ class Busy : State
 		}
 		else if (result == -1)
 		{
-			;
+			sMachine.SetState(sMachine.ERROR);				//进入错误状态，将会进行错误处理
 		}
 		else
 		{

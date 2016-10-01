@@ -40,6 +40,15 @@ namespace Manager
             FailedHandler = (sender, e) => { };
         }
 
+        public void Initial()
+        {
+            Task task = Task.Run(() => { Thread.Sleep(2000); });
+            task.ContinueWith(t => 
+            {
+                CallEventHanlder(new ItemEventArgs(!t.IsFaulted));
+            });
+        }
+
         public void Upload(string targetFile, string LocalFile)
         {
 
