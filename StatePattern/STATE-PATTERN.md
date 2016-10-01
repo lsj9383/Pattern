@@ -1,8 +1,11 @@
 ﻿#状态模式
 状态机是某种具有多种状态机器的抽象。状态机适合机器根据当前不同的状态，对不同的请求执行不同的操作的业务。<br>
 状态模式是采用面向对象机制对状态机作编程，通常分为两类:
-* 一类是由用户驱动的`外部驱动的状态模式`
-* 另一类是由状态机内部状态驱动的`内部状态模式`。
+* 外部驱动的状态模式
+	* [例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)
+* 内部驱动的状态模式
+	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)
+	* [多线程例子]()
 
 ##外部驱动的状态模式
 外部驱动的状态模式，是由用户使用状态机，而使状态机的状态进行改变的。<br><br>
@@ -211,6 +214,55 @@ class StateMachine
 	}
 }
 ```
-在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)给出了两个状态相互切换的小案例。<br>
+在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs) 给出了两个状态相互切换的小案例，这里包含了对Job的定义。 <br>
 <br>由以上介绍的方案，这种状态模式有个很明显的缺点: 用户将会永远在状态机线程中。马上介绍的多线程编程模型，将会克服这个缺点。单线程的该模型，只能是个最外层的程序框架。
 ##内部状态机的多线程编程
+多线程处理的状态模式，主要在两方面:
+* 多线程执行状态机主循环
+* 多线程执行状态机的Job
+要认识到，一方面若用单一线程，将会无法添加额外的状态机，并且状态机线程和用户线程本就相互较为独立。用户有什么需求，只需要向状态提出Job请求即可。另一方面，Job操作认为是比较耗时的，因此Job操作全部采用异步操作。也就是说状态机在处理一个Job的时候，会再开一个线程处理Job。需要注意的是，在一个Job还未处理完时，状态机不应再处理其他Job，而是进入BUSY状态，等待该Job线程处理完毕。<br>
+###状态类
+有四种必要的状态类是多线程状态模式所必须，也是核心稳健的控制机制的关键类。
+* BUSY
+* LOOP
+* ERROR
+* EMPTY
+首先来定义抽象状态基类，该基类有共同的操作。(之前的定义都是对接口的，这里是抽象基类，是因为可能有很多基类，这些基类的构造函数势必有相同的部分)
+```C#
+abstract class State
+{
+	protected StateMachine sMachine;
+	public State(StateMachine machine)		//抽象基类，得到状态机，方便在状态类中对状态机进行状态转移等处理。
+	{
+		sMachine = machine;
+	}
+	public abstract void Next();
+}
+```
+
+####BUSY
+BUSY状态，用来标识当前的Job是否处于运行。BUSY状态相当特殊，它是一个Job操作后的等待状态，因此，在操作完成以前，是不能进入其他状态的。而在操作完成后，BUSY状态需要根据完成的情况，进行状态转移。这样就势必需要让Job能够返回一个操作结果的信息。
+```C#
+//繁忙状态
+class Busy : State
+{
+	public Busy(StateMachine machine):base(machine){ }
+
+	public override void Next()
+	{
+		int result = sMachine.jobResult.GetStatus();       //获得结果，在获得操作结果后，会立刻将内部结果置为0
+		if (result == 1)
+		{
+			sMachine.SetState(sMachine.LOOP);               //恢复轮询job状态
+		}
+		else if (result == -1)
+		{
+			;
+		}
+		else
+		{
+			;       //still BUSY, No action
+		}
+	}
+}
+```
