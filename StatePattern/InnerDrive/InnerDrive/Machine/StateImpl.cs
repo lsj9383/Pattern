@@ -17,7 +17,16 @@ namespace InnerDrive.Machine
 
         public void Next()
         {
-            ;
+            if (Machine.JobsCount() > 0)
+            {
+                Machine.DequeueJob().Process();
+            }
+            Machine.SetState(Machine.stateTwo);
+        }
+
+        public override string ToString()
+        {
+            return "StateOne";
         }
     }
 
@@ -32,7 +41,12 @@ namespace InnerDrive.Machine
 
         public void Next()
         {
-            ;
+            Machine.SetState(Machine.stateOne);
+        }
+
+        public override string ToString()
+        {
+            return "StateTwo";
         }
     }
 }

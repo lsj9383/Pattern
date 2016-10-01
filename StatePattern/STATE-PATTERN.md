@@ -211,5 +211,6 @@ class StateMachine
 	}
 }
 ```
+在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)给出了两个状态相互切换的小案例。<br>
 <br>由以上介绍的方案，这种状态模式有个很明显的缺点: 用户将会永远在状态机线程中。马上介绍的多线程编程模型，将会克服这个缺点。单线程的该模型，只能是个最外层的程序框架。
 ##内部状态机的多线程编程

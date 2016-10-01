@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Machine\Job.cs" />
+    <Compile Include="Machine\JobImpl.cs" />
     <Compile Include="Machine\State.cs" />
     <Compile Include="Machine\StateMachine.cs" />
     <Compile Include="Machine\StateImpl.cs" />
