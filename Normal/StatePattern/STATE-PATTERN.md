@@ -2,9 +2,9 @@
 状态机是某种具有多种状态机器的抽象。状态机适合机器根据当前不同的状态，对不同的请求执行不同的操作的业务。<br>
 状态模式是采用面向对象机制对状态机作编程，通常分为两类:
 * 外部驱动的状态模式
-	* [例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)
+	* [例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)
 * 内部驱动的状态模式
-	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)
+	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)
 	* [多线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)
 
 ##外部驱动的状态模式
