@@ -2,10 +2,10 @@
 状态机是某种具有多种状态机器的抽象。状态机适合机器根据当前不同的状态，对不同的请求执行不同的操作的业务。<br>
 状态模式是采用面向对象机制对状态机作编程，通常分为两类:
 * 外部驱动的状态模式
-	* [例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs)
+	* [例子](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/InnerDrive/InnerDrive/Program.cs)
 * 内部驱动的状态模式
-	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)
-	* [多线程例子](https://github.com/lsj9383/Pattern/blob/master/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)
+	* [单线程例子](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/OutDrive/OutDrive/Program.cs)
+	* [多线程例子](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)
 
 ##外部驱动的状态模式
 外部驱动的状态模式，是由用户使用状态机，而使状态机的状态进行改变的。<br><br>
@@ -81,7 +81,7 @@ class StateMachine
 }
 
 ```
-在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/OutDrive/OutDrive/Program.cs)已经给出了一个简单的外部驱动的状态模式实例, 该实例是参考《Head First 设计模式》一书中的状态模式示例编写的。
+在[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/OutDrive/OutDrive/Program.cs)已经给出了一个简单的外部驱动的状态模式实例, 该实例是参考《Head First 设计模式》一书中的状态模式示例编写的。
 
 ##内部驱动的状态模式
 内部驱动的状态模式述说了两种特性:
@@ -214,7 +214,7 @@ class StateMachine
 	}
 }
 ```
-在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/InnerDrive/InnerDrive/Program.cs) 给出了两个状态相互切换的小案例，这里包含了对Job的定义。 <br>
+在[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/InnerDrive/InnerDrive/Program.cs) 给出了两个状态相互切换的小案例，这里包含了对Job的定义。 <br>
 <br>由以上介绍的方案，这种状态模式有个很明显的缺点: 用户将会永远在状态机线程中。马上介绍的多线程编程模型，将会克服这个缺点。单线程的该模型，只能是个最外层的程序框架。
 ##内部状态机的多线程编程
 多线程处理的状态模式，主要在两方面:
@@ -462,4 +462,4 @@ class StateMachine
 	}
 }
 ```
-在[这里](https://github.com/lsj9383/Pattern/blob/master/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)有个操作实例，可供参考。
+在[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/ThreadStateMachine/ThreadStateMachine/Program.cs)有个操作实例，可供参考。
