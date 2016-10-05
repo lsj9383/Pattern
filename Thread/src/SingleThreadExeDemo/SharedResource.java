@@ -1,4 +1,4 @@
-package SingleThreadExe;
+package SingleThreadExeDemo;
 
 public class SharedResource {
 	Object LockRoot = new Object();

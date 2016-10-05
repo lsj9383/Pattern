@@ -1,4 +1,4 @@
-package SingleThreadExe;
+package SingleThreadExeDemo;
 
 public class User extends Thread{
 	final private SharedResource sr;

@@ -1,6 +1,4 @@
-package SingleThreadExe;
-
-import com.sun.xml.internal.ws.client.sei.ResponseBuilder.Body;
+package SingleThreadExeDemo;
 
 public class Main {
 	public static void main(String[] args) throws Exception{
