@@ -1,18 +1,11 @@
 package ReadWriteLockDemo;
 
-/*
- * 写者优先: 意味着若有写者等待，则后面的读者均wait。
- * 
- * 读者优先: 意味着就算有写者等待，所有读者也都不会wait。要在没有读者的时候，才会将锁交给写者。
- * 
- * */
-
 public class ReadWriteLock {
 	private int readingReaders = 0;		//正在读取的线程数量。rw.readLock()后，但未rw.readUnlock()的线程数。
 	private int waitingWriters = 0;		//正在等待的写者线程数量。rw.writeLock()后，被wait的线程数。
 	private int writingWriters = 0;		//正在写的线程数，非0即1。
 	
-	private boolean preferWriter = true;	//写者优先
+	private boolean preferWriter = true;
 	
 	public synchronized void readLock() throws InterruptedException{
 		while((writingWriters == 1) || (preferWriter && waitingWriters>0)){		//若有写者，或者有写者等待，则wait
@@ -22,9 +15,9 @@ public class ReadWriteLock {
 	}
 	
 	public synchronized void readUnlock() throws InterruptedException{
-		readingReaders--;	//读者线程-1
-		preferWriter = true;
-		notifyAll();		//
+		readingReaders--;		//读者线程-1
+		preferWriter = true;	//当有读者退出，在readLock中就要重新重视等待的写者了，新加入的读者将会因为等待的写者而阻塞。
+		notifyAll();			//
 	}
 	
 	public synchronized void writeLock() throws InterruptedException{
@@ -41,7 +34,7 @@ public class ReadWriteLock {
 	
 	public synchronized void writeUnlock() throws InterruptedException{
 		writingWriters--;
-		preferWriter = false;
+		preferWriter = false;	//每次有写者退出，都会在readLock()的wait处暂时无视等待的写者。通过一批等待的读者，避免在写者拥挤时，会让读者一直阻塞。
 		notifyAll();
 	}
 }
