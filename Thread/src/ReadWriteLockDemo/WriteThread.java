@@ -20,7 +20,7 @@ public class WriteThread extends Thread{
 		try {
 			while(true){
 				data.write(nextChar());
-				Thread.sleep(random.nextInt(30));
+				Thread.sleep(random.nextInt(3000));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
