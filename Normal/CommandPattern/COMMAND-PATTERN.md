@@ -1,8 +1,8 @@
 #命令模式
 命令模式将请求封装为对象，以便使用实际不同的请求。这个请求就是命令模式的命令。<br>
 以下是两个例子:
- * [单线程普通例子-接口实现]()
- * [多线程例子-委托实现]()
+ * [单线程普通例子-接口实现](https://github.com/lsj9383/Pattern/blob/master/Normal/CommandPattern/SingleThread/SingleThread/Program.cs)
+ * [多线程例子-委托实现](https://github.com/lsj9383/Pattern/blob/master/Normal/CommandPattern/MultiThread/MultiThread/Program.cs)
 
 ##目的
 命令模式的目的是将请求的发送者，和请求的执行之间实现解耦，这是一个非常常见的OOP编程方法。具体来说，一个工具类中包含了其他类的对象，而这些其他类应该是抽象的，具体使用什么类应该是由用户决定的，而不应该由工具类把这个类固定死。
