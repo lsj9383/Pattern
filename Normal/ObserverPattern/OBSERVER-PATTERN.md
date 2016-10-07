@@ -2,7 +2,7 @@
 观察者模式，又名订阅-发布，它将观察者与被观察者之间实现解耦。在使用这个模式的时候，要明确观察者(Observer)是什么，被观察者(Subject)是什么。以下是3个例子:
 * [按钮事件-接口实现](https://github.com/lsj9383/Pattern/blob/master/Normal/ObserverPattern/InterfaceAchieve/InterfaceAchieve/Program.cs)
 * [按钮事件-委托实现](https://github.com/lsj9383/Pattern/blob/master/Normal/ObserverPattern/DelegateAchieve/DelegateAchieve/Program.cs)
-* [多线程的事件驱动模型]()
+* [多线程的事件驱动模型](https://github.com/lsj9383/Pattern/blob/master/Normal/ObserverPattern/MultiThread/MultiThread/Program.cs)
 * [Digitial Simulation](https://github.com/lsj9383/digital-simulator)
 
 ##目的
