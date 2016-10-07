@@ -2,8 +2,8 @@
 * 常用设计模式
 	* [单例模式]()
 	* [装饰者模式]()
-	* [观察者模式]()
 	* [代理模式]()
+	* [观察者模式](https://github.com/lsj9383/Pattern/blob/master/Normal/ObserverPattern/OBSERVER-PATTERN.md)
 	* [命令模式](https://github.com/lsj9383/Pattern/blob/master/Normal/CommandPattern/COMMAND-PATTERN.md)
 	* [状态模式](https://github.com/lsj9383/Pattern/blob/master/Normal/StatePattern/STATE-PATTERN.md)
 * 多线程设计模式
