@@ -10,6 +10,7 @@
 
 ##标准UML
 ![](https://github.com/lsj9383/Pattern/blob/master/icon/CommandUML.png)
+
 ##标准参与者
  + Command. 申明执行的接口。
  + ConcreteCommand. 具体的命令执行方式。
