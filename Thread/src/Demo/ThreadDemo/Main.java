@@ -1,10 +1,13 @@
 package Demo.ThreadDemo;
 
+import java.util.concurrent.Callable;
+
 import Demo.ThreadDemo.ThreadPool.*;
 
 public class Main {
-	public static void main(String[] args){
-		ThreadPool pool = new SimpleThreadPool(2);
+	
+	static void SimpleThreadPoolTest(){
+		SimpleThreadPool pool = new SimpleThreadPool(2);
 		pool.Start();
 		
 		pool.AddJob(new Runnable(){
@@ -42,7 +45,28 @@ public class Main {
 				}
 			}
 		});
+	}
+	
+	static void FutureThreadPoolTest(){
+		FutureThreadPool pool = new FutureThreadPool(2);
 		
+		pool.Start();
+		
+		Future<Integer> future1 = pool.AddJob(new Callable(){
+									@Override
+									public Object call() throws Exception {
+										Thread.sleep(1000);
+										return 1;
+									}
+								});
+		
+		System.out.println(future1.GetResult());
+	}
+	
+	
+	
+	public static void main(String[] args){
+		FutureThreadPoolTest();
 		System.out.println("Main Done!");
 	}
 }
