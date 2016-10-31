@@ -1,8 +1,8 @@
 ﻿#单例模式
 单例模式用于创建唯一的对象，其形式相当简单。但其应用分了单线程和多线程两种。
-[这里]()有个简单的单例C#实现
+[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/Singleton/Singleton/Program.cs)有个简单的单例C#实现
 
-##普通单例模式
+##一、普通单例模式
 ```C#
 class Unique
 {
@@ -23,7 +23,7 @@ class Unique
 ```
 从形式上来说，应用单例的对象是将构造函数私有化，以禁止用户反复new出新对象。得到对象的方式是编写一个静态函数，用户通过这个函数可以获得单例对象。程序员就是对静态函数进行修改，以使用户初始得到对象的时候会进行初始化，而后直接得到该对象。
 
-##多线程下的单例模式
+##二、多线程下的单例模式
 若在多线程的运行环境下，继续使用传统的方式，是有可能出现两个对象的，这样违反了单例模式。比如两个线程同时在执行`Unique.GetInstance()`以获得单例，则可能存在以下顺序：
 ```
 			线程1					线程2
@@ -95,4 +95,4 @@ class MultiThreadUnique
 	}
 }
 ```
-只需要将`lock`放在`if(Instance==null)`语句块中即可。需要注意的是，这里进行了两次加锁(两次进行null判断)。这是因为可能在执行`Instance = new MultiThreadUnique();`的时候，有现成在`lock`处等待，当它被唤醒时，若不重新进行null判断那么还是会创建新对象。通过这个技术，使得`GetInstance`方法的效率在原基础上提高了不少。[这里]()是一个简单的模式示例。
+只需要将`lock`放在`if(Instance==null)`语句块中即可。需要注意的是，这里进行了两次加锁(两次进行null判断)。这是因为可能在执行`Instance = new MultiThreadUnique();`的时候，有现成在`lock`处等待，当它被唤醒时，若不重新进行null判断那么还是会创建新对象。通过这个技术，使得`GetInstance`方法的效率在原基础上提高了不少。[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/Singleton/Singleton/Program.cs)是一个简单的模式示例。
