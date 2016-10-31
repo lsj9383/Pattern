@@ -1,6 +1,6 @@
 ﻿#设计模式
 * 常用设计模式
-	* [单例模式]()
+	* [单例模式](https://github.com/lsj9383/Pattern/blob/master/Normal/Singleton/SINGLETON-PATTERN.md)
 	* [装饰者模式]()
 	* [代理模式]()
 	* [观察者模式](https://github.com/lsj9383/Pattern/blob/master/Normal/ObserverPattern/OBSERVER-PATTERN.md)
