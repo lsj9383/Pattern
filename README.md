@@ -4,6 +4,7 @@
 		* [单例模式](https://github.com/lsj9383/Pattern/blob/master/Normal/Singleton/SINGLETON-PATTERN.md)
 		* [工厂方法模式]()
 		* [抽象工厂模式]()
+		* [生成器模式](https://github.com/lsj9383/Pattern/blob/master/Normal/BuilderPattern/BUILDER-PATTERN.md)
 		* [原型模式]()
 	* 结构型
 		* [装饰者模式]()
