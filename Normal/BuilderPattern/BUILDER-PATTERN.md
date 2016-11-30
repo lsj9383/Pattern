@@ -1,4 +1,8 @@
 #生成器模式(Builder Pattern)
+目前只是简述了Builder Pattern的一个应用。
+[这里](https://github.com/lsj9383/Pattern/blob/master/Normal/BuilderPattern/src/client/Main.java)展示的生成器模式在Java的一个应用。
+
+##问题
 若一个对象的方法中具备了相当多的参数，那么在调用该方法时写入参数将会致人迷惑。如有一个**Person类**，其构造器方法具有相当多的参数:
 ```java
 public class Person {
@@ -54,7 +58,6 @@ public class Person {
 Person person = new Person("lsj", 23, "boy", "lhw", "hl", null, null, new Date());
 ```
 虽然在C#已经克服了该问题，但是在Java中该问题仍然存在，但是我们可以通过Builder Pattern以克服该问题。
-[这里]()展示的生成器模式在Java的一个应用。
 
 ##解决
 核心的方案是通过将参数的构建由一个Builder对象来完成，Builder对象实质上是对参数进行保存。只有在我们参数构建完成的时候，才进行真正的对象实例化。
@@ -94,4 +97,14 @@ Person person = new Person.Builder()
 							.setMotherName("hl")
 							.setBirthday(new Date())
 							.build();
+```
+
+##扩展
+Builder并不仅限于构造方法的参数初始化，对于普通方法的初始化也是适合的。
+```java
+class MyClass{
+	void Method(Builder build){
+		...
+	}
+}
 ```

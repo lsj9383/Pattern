@@ -3,14 +3,14 @@ package client;
 import java.util.Date;
 
 public class Person {
-	final private String name;
-	final private int age;
-	final private String sex;
-	final private String FaterName;
-	final private String MotherName;
-	final private String LoverName;
-	final private String ChildName;
-	final private Date birthday;
+	private String name;
+	private int age;
+	private String sex;
+	private String FaterName;
+	private String MotherName;
+	private String LoverName;
+	private String ChildName;
+	private Date birthday;
 	
 	public static class Builder{
 		private String name;
@@ -61,6 +61,10 @@ public class Person {
 	}
 	
 	public Person(Builder builder){
+		Update(builder);
+	}
+	
+	public void Update(Builder builder){
 		name = builder.name;
 		age = builder.age;
 		sex = builder.sex;
@@ -83,7 +87,4 @@ public class Person {
 				+ "Child : %s \n"
 				+ "birthday : %s", name, age, sex, FaterName, MotherName, LoverName, ChildName, birthday);
 	}
-	
-	
-	
 }
